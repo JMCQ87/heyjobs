@@ -1,10 +1,13 @@
 require_relative 'callable'
+require_relative 'load_ad_states'
 require 'pry'
 require 'json'
 require 'faraday'
 
 class SyncAds
   include Callable
+
+  attr_reader :local_path, :campaign_url
 
   def initialize(local_path: 'campaigns/local.json', campaign_url: "https://mockbin.org/bin/fcb30500-7b98-476f-810d-463a0b8fc3df")
     # The Sync object consists of a URL to get the remote version and a local to compare to
@@ -13,8 +16,7 @@ class SyncAds
   end
 
   def call
-    local_state = load_local_state()
-    remote_state = retrieve_remote_state()
+    local_state, remote_state = LoadAdStates.call(self)
 
     comparison = compare_states(local_state, remote_state)
   end
@@ -70,15 +72,4 @@ class SyncAds
     differences
   end
 
-  def retrieve_remote_state
-    response = Faraday.get(@campaign_url)
-    data = JSON.parse(response.body)
-    data['ads']
-  end
-
-  def load_local_state
-    file = File.read(@local_path)
-    data = JSON.parse(file)
-    data['ads']
-  end
 end

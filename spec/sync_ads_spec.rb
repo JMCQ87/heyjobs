@@ -2,11 +2,6 @@ require_relative '../lib/sync_ads'
 
 describe 'Sync Ad Service' do
   # Unit tests
-  it "should load local state" do
-    local_state = SyncAds.new().send(:load_local_state)
-    expect(local_state.length).to eq(4)
-  end
-
   it "should find no differences if there are none" do
     mock_state = [
       {
@@ -21,10 +16,6 @@ describe 'Sync Ad Service' do
   end
 
   # Integration test, with external service
-  it "should load remote state" do
-    remote_state = SyncAds.new().send(:retrieve_remote_state)
-    expect(remote_state.length).to eq(3)
-  end
 
   # End-to-End tests
   it "should record differences" do
